@@ -1,15 +1,27 @@
 const socket = io();
 const canvas = document.getElementById('board');
+const clearBtn = document.getElementById('clear');
 const ctx = canvas.getContext('2d');
 let drawing = false;
+
+resizeCanvas();
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth * 0.8;
+  canvas.height = window.innerHeight * 0.8;
+}
 
 canvas.addEventListener('mousedown', start);
 canvas.addEventListener('mouseup', stop);
 canvas.addEventListener('mouseout', stop);
 canvas.addEventListener('mousemove', draw);
+clearBtn.addEventListener('click', () => clearBoard(true));
 
 socket.on('draw', (data) => {
   drawLine(data.x0, data.y0, data.x1, data.y1, data.color, false);
+});
+socket.on('clear', () => {
+  clearBoard(false);
 });
 
 function start(e) {
@@ -39,7 +51,13 @@ function drawLine(x0, y0, x1, y1, color, emit) {
   socket.emit('draw', { x0, y0, x1, y1, color });
 }
 
+function clearBoard(emit) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (emit) socket.emit('clear');
+}
+
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
   return [e.clientX - rect.left, e.clientY - rect.top];
 }
+

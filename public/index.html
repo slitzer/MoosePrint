@@ -6,12 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Real-time Whiteboard</title>
   <style>
-    body { margin: 0; }
-    canvas { border: 1px solid #ccc; display: block; margin: 0 auto; }
+    body { margin: 0; display: flex; flex-direction: column; align-items: center; }
+    canvas { border: 1px solid #ccc; }
   </style>
 </head>
 <body>
-  <canvas id="board" width="800" height="600"></canvas>
+  <button id="clear">Clear Board</button>
+  <canvas id="board"></canvas>
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>

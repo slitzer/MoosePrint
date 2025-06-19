@@ -14,6 +14,9 @@ io.on('connection', (socket) => {
   socket.on('draw', (data) => {
     socket.broadcast.emit('draw', data);
   });
+  socket.on('clear', () => {
+    socket.broadcast.emit('clear');
+  });
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
