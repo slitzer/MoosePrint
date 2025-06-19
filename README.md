@@ -31,3 +31,28 @@ Think **[webwhiteboard.com](https://webwhiteboard.com)** but on your own server.
    ```bash
    git clone https://github.com/your-username/whiteboard-app.git
    cd whiteboard-app
+   ```
+
+2. **Build and start the containers:**
+   ```bash
+   docker compose up --build
+   ```
+
+3. **Open your browser:**
+   Navigate to `http://localhost:3000` (replace `localhost` with your server's IP or domain).
+
+4. **Invite a friend:**
+   Share the URL. Anyone who visits can draw on the whiteboard in real time.
+
+---
+
+## 🛠 Development
+
+- **Hot-reload:** The `/public` folder is mounted as a volume. Any changes to static files will refresh automatically.
+- **Stopping:** Use `Ctrl+C` or `docker compose down` to stop the containers.
+
+---
+
+## 📜 License
+
+This project is provided under the MIT License.
