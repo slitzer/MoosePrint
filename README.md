@@ -38,10 +38,12 @@ Think **[webwhiteboard.com](https://webwhiteboard.com)** but on your own server.
    docker compose up --build
    ```
 
-3. **Open your browser:**
-   Navigate to `http://localhost:3000` (replace `localhost` with your server's IP or domain).
+3. **Access Nginx Proxy Manager:**
+   The compose file now includes an [Nginx Proxy Manager](https://nginxproxymanager.com/) container. Open `http://localhost:81` and log in with the default credentials to configure a new proxy host that forwards to `whiteboard:3000`.
 
-4. **Invite a friend:**
+4. **Open your browser:**
+   Navigate to `http://localhost:3000` (replace `localhost` with your server's IP or domain).
+5. **Invite a friend:**
    Share the URL. Anyone who visits can draw on the whiteboard in real time.
 
 ---
