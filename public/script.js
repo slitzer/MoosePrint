@@ -1,6 +1,7 @@
 const socket = io();
 const canvas = document.getElementById('board');
 const clearBtn = document.getElementById('clear');
+const resetZoomBtn = document.getElementById('resetZoom');
 const ctx = canvas.getContext('2d');
 let drawing = false;
 let lastX = 0,
@@ -23,8 +24,9 @@ canvas.addEventListener('mousedown', start);
 canvas.addEventListener('mouseup', stop);
 canvas.addEventListener('mouseout', stop);
 canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('wheel', zoom);
+canvas.addEventListener('wheel', zoom, { passive: false });
 clearBtn.addEventListener('click', () => clearBoard(true));
+resetZoomBtn.addEventListener('click', resetZoom);
 
 socket.on('draw', (data) => {
   drawLine(data.x0, data.y0, data.x1, data.y1, data.color, false);
@@ -54,6 +56,11 @@ function zoom(e) {
   const delta = e.deltaY < 0 ? 1.1 : 0.9;
   scale = Math.min(5, Math.max(0.2, scale * delta));
   canvas.style.transform = `scale(${scale})`;
+}
+
+function resetZoom() {
+  scale = 1;
+  canvas.style.transform = 'scale(1)';
 }
 
 function drawLine(x0, y0, x1, y1, color, emit) {
