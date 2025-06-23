@@ -37,6 +37,15 @@ Think **[webwhiteboard.com](https://webwhiteboard.com)** but on your own server.
    ```bash
    docker compose up --build
    ```
+   If you already run your own instance of **Nginx Proxy Manager**, you can
+   launch only the whiteboard service by using the optional compose file:
+   ```bash
+   docker compose -f docker-compose.external-npm.yml up --build -d
+   ```
+   This file attaches the container to an external network named
+   `npm_proxy` so your existing NPM can forward requests to `whiteboard:3000`.
+   Replace `npm_proxy` with whatever network name your NPM uses (check with
+   `docker network ls`).
 
 3. **Access Nginx Proxy Manager:**
    The compose file now includes an [Nginx Proxy Manager](https://nginxproxymanager.com/) container. Open `http://localhost:81` and log in with the default credentials to configure a new proxy host that forwards to `whiteboard:3000`.

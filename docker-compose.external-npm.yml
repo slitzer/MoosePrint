@@ -1,0 +1,15 @@
+version: '3'
+services:
+  whiteboard:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./public:/app/public
+    restart: unless-stopped
+    networks:
+      - npm_proxy
+
+networks:
+  npm_proxy:
+    external: true
