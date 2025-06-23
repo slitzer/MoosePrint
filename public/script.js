@@ -3,8 +3,16 @@ const canvas = document.getElementById('board');
 const clearBtn = document.getElementById('clear');
 const ctx = canvas.getContext('2d');
 let drawing = false;
+let lastX = 0,
+  lastY = 0;
+let scale = 1;
 
 resizeCanvas();
+canvas.style.transform = `scale(${scale})`;
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  canvas.style.transform = `scale(${scale})`;
+});
 
 function resizeCanvas() {
   canvas.width = window.innerWidth * 0.8;
@@ -15,6 +23,7 @@ canvas.addEventListener('mousedown', start);
 canvas.addEventListener('mouseup', stop);
 canvas.addEventListener('mouseout', stop);
 canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('wheel', zoom);
 clearBtn.addEventListener('click', () => clearBoard(true));
 
 socket.on('draw', (data) => {
@@ -40,6 +49,13 @@ function draw(e) {
   [lastX, lastY] = [x, y];
 }
 
+function zoom(e) {
+  e.preventDefault();
+  const delta = e.deltaY < 0 ? 1.1 : 0.9;
+  scale = Math.min(5, Math.max(0.2, scale * delta));
+  canvas.style.transform = `scale(${scale})`;
+}
+
 function drawLine(x0, y0, x1, y1, color, emit) {
   ctx.strokeStyle = color;
   ctx.beginPath();
@@ -58,6 +74,9 @@ function clearBoard(emit) {
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
-  return [e.clientX - rect.left, e.clientY - rect.top];
+  return [
+    (e.clientX - rect.left) / scale,
+    (e.clientY - rect.top) / scale,
+  ];
 }
 
