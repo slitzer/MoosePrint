@@ -6,8 +6,10 @@ const resetMenu = document.getElementById('contextResetZoom');
 const themeLight = document.getElementById('themeLight');
 const themeDark = document.getElementById('themeDark');
 const NS = 'http://www.w3.org/2000/svg';
-const BOARD_WIDTH = 1000;
-const BOARD_HEIGHT = 1000;
+const userList = document.getElementById('userList');
+const userRects = {};
+const username = prompt('Enter username') || `User${Math.floor(Math.random()*1000)}`;
+let myColor = 'black';
 let drawing = false;
 let lastX = 0,
   lastY = 0;
@@ -21,6 +23,18 @@ svg.style.transform = `scale(${scale})`;
 window.addEventListener('resize', () => {
   resizeBoard();
   svg.style.transform = `scale(${scale})`;
+  socket.emit('updateResolution', {
+    width: parseInt(svg.getAttribute('width')),
+    height: parseInt(svg.getAttribute('height')),
+  });
+});
+
+socket.on('connect', () => {
+  socket.emit('join', {
+    username,
+    width: parseInt(svg.getAttribute('width')),
+    height: parseInt(svg.getAttribute('height')),
+  });
 });
 
 function resizeBoard() {
@@ -57,6 +71,12 @@ socket.on('draw', (data) => {
 });
 socket.on('clear', () => {
   clearBoard(false);
+});
+socket.on('joined', (data) => {
+  myColor = data.color;
+});
+socket.on('usersUpdate', (users) => {
+  updateUsers(users);
 });
 
 function showMenu(x, y) {
@@ -125,8 +145,8 @@ function clearBoard(emit) {
 function getPos(e) {
   const rect = svg.getBoundingClientRect();
   return [
-    ((e.clientX - rect.left) / rect.width) * BOARD_WIDTH,
-    ((e.clientY - rect.top) / rect.height) * BOARD_HEIGHT,
+    (e.clientX - rect.left) / scale,
+    (e.clientY - rect.top) / scale,
   ];
 }
 
@@ -137,5 +157,38 @@ function setTheme(mode) {
   } else {
     document.body.classList.remove('dark');
   }
+}
+
+function updateUsers(users) {
+  userList.innerHTML = '';
+  const myId = socket.id;
+  users.forEach((u) => {
+    const li = document.createElement('li');
+    li.textContent = u.username;
+    li.style.color = u.color;
+    userList.appendChild(li);
+
+    let rect = userRects[u.id];
+    if (!rect) {
+      rect = document.createElementNS(NS, 'rect');
+      rect.setAttribute('fill', 'none');
+      rect.setAttribute('pointer-events', 'none');
+      rect.setAttribute('opacity', '0.5');
+      svg.appendChild(rect);
+      userRects[u.id] = rect;
+    }
+    rect.setAttribute('stroke', u.color);
+    rect.setAttribute('x', 0);
+    rect.setAttribute('y', 0);
+    rect.setAttribute('width', u.width);
+    rect.setAttribute('height', u.height);
+  });
+
+  Object.keys(userRects).forEach((id) => {
+    if (!users.find((u) => u.id === id)) {
+      svg.removeChild(userRects[id]);
+      delete userRects[id];
+    }
+  });
 }
 

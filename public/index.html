@@ -54,11 +54,31 @@
     body.dark #contextMenu li:hover {
       background: rgba(255,255,255,0.1);
     }
+    #userListContainer {
+      width: 150px;
+      border-right: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 10px;
+    }
+    #userList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    #userList li {
+      margin: 4px 0;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <div id="userListContainer">
+    <ul id="userList"></ul>
+  </div>
   <div id="boardContainer">
-    <svg id="board" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"></svg>
+    <svg id="board" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
   <ul id="contextMenu">
     <li id="contextClear">Clear Board</li>
