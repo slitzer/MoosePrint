@@ -20,10 +20,10 @@ function resizeBoard() {
   svg.setAttribute('height', window.innerHeight * 0.8);
 }
 
-svg.addEventListener('mousedown', start);
-svg.addEventListener('mouseup', stop);
-svg.addEventListener('mouseleave', stop);
-svg.addEventListener('mousemove', draw);
+svg.addEventListener('pointerdown', start);
+svg.addEventListener('pointerup', stop);
+window.addEventListener('pointerup', stop);
+svg.addEventListener('pointermove', draw);
 svg.addEventListener('wheel', zoom, { passive: false });
 clearBtn.addEventListener('click', () => clearBoard(true));
 resetZoomBtn.addEventListener('click', resetZoom);
@@ -37,11 +37,15 @@ socket.on('clear', () => {
 
 function start(e) {
   drawing = true;
+  svg.setPointerCapture(e.pointerId);
   [lastX, lastY] = getPos(e);
 }
 
-function stop() {
+function stop(e) {
   drawing = false;
+  if (e && svg.hasPointerCapture(e.pointerId)) {
+    svg.releasePointerCapture(e.pointerId);
+  }
 }
 
 function draw(e) {
@@ -71,6 +75,7 @@ function drawLine(x0, y0, x1, y1, color, emit) {
   line.setAttribute('y2', y1);
   line.setAttribute('stroke', color);
   line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('pointer-events', 'none');
   svg.appendChild(line);
   if (!emit) return;
   socket.emit('draw', { x0, y0, x1, y1, color });
