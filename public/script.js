@@ -22,7 +22,7 @@ function resizeBoard() {
 
 svg.addEventListener('mousedown', start);
 svg.addEventListener('mouseup', stop);
-svg.addEventListener('mouseout', stop);
+svg.addEventListener('mouseleave', stop);
 svg.addEventListener('mousemove', draw);
 svg.addEventListener('wheel', zoom, { passive: false });
 clearBtn.addEventListener('click', () => clearBoard(true));
