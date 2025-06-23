@@ -1,12 +1,18 @@
 const socket = io();
 const svg = document.getElementById('board');
-const clearBtn = document.getElementById('clear');
-const resetZoomBtn = document.getElementById('resetZoom');
+const contextMenu = document.getElementById('contextMenu');
+const clearMenu = document.getElementById('contextClear');
+const resetMenu = document.getElementById('contextResetZoom');
+const themeLight = document.getElementById('themeLight');
+const themeDark = document.getElementById('themeDark');
 const NS = 'http://www.w3.org/2000/svg';
 let drawing = false;
 let lastX = 0,
   lastY = 0;
 let scale = 1;
+
+let currentTheme = 'light';
+setTheme("light");
 
 resizeBoard();
 svg.style.transform = `scale(${scale})`;
@@ -25,8 +31,24 @@ svg.addEventListener('pointerup', stop);
 window.addEventListener('pointerup', stop);
 svg.addEventListener('pointermove', draw);
 svg.addEventListener('wheel', zoom, { passive: false });
-clearBtn.addEventListener('click', () => clearBoard(true));
-resetZoomBtn.addEventListener('click', resetZoom);
+
+svg.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  showMenu(e.clientX, e.clientY);
+});
+
+document.addEventListener('click', hideMenu);
+
+themeLight.addEventListener('click', () => setTheme('light'));
+themeDark.addEventListener('click', () => setTheme('dark'));
+clearMenu.addEventListener('click', () => {
+  hideMenu();
+  clearBoard(true);
+});
+resetMenu.addEventListener('click', () => {
+  hideMenu();
+  resetZoom();
+});
 
 socket.on('draw', (data) => {
   drawLine(data.x0, data.y0, data.x1, data.y1, data.color, false);
@@ -34,6 +56,16 @@ socket.on('draw', (data) => {
 socket.on('clear', () => {
   clearBoard(false);
 });
+
+function showMenu(x, y) {
+  contextMenu.style.left = `${x}px`;
+  contextMenu.style.top = `${y}px`;
+  contextMenu.style.display = 'block';
+}
+
+function hideMenu() {
+  contextMenu.style.display = 'none';
+}
 
 function start(e) {
   drawing = true;
@@ -94,5 +126,14 @@ function getPos(e) {
     (e.clientX - rect.left) / scale,
     (e.clientY - rect.top) / scale,
   ];
+}
+
+function setTheme(mode) {
+  currentTheme = mode;
+  if (mode === 'dark') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
 }
 

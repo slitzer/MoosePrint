@@ -11,12 +11,6 @@
       height: 100vh;
       display: flex;
     }
-    #controls {
-      width: 150px;
-      display: flex;
-      flex-direction: column;
-      padding: 1em;
-    }
     #boardContainer {
       flex-grow: 1;
       display: flex;
@@ -27,17 +21,51 @@
       border: 1px solid #ccc;
       transform-origin: center center;
       touch-action: none;
+      background: #fff;
+    }
+    body.dark {
+      background: #282c33;
+    }
+    body.dark svg#board {
+      background: #3c424d;
+    }
+    #contextMenu {
+      position: absolute;
+      display: none;
+      background: #fff;
+      border: 1px solid #ccc;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      z-index: 1000;
+    }
+    body.dark #contextMenu {
+      background: #3c424d;
+      color: #fff;
+      border-color: #555;
+    }
+    #contextMenu li {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    #contextMenu li:hover {
+      background: rgba(0,0,0,0.1);
+    }
+    body.dark #contextMenu li:hover {
+      background: rgba(255,255,255,0.1);
     }
   </style>
 </head>
 <body>
-  <div id="controls">
-    <button id="clear">Clear Board</button>
-    <button id="resetZoom">Reset Zoom</button>
-  </div>
   <div id="boardContainer">
     <svg id="board" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
+  <ul id="contextMenu">
+    <li id="contextClear">Clear Board</li>
+    <li id="contextResetZoom">Reset Zoom</li>
+    <li id="themeLight">Light Mode</li>
+    <li id="themeDark">Dark Mode</li>
+  </ul>
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
