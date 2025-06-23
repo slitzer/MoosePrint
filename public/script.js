@@ -8,7 +8,7 @@ const themeDark = document.getElementById('themeDark');
 const NS = 'http://www.w3.org/2000/svg';
 const userList = document.getElementById('userList');
 const userRects = {};
-const username = prompt('Enter username') || `User${Math.floor(Math.random()*1000)}`;
+let username = `User${Math.floor(Math.random()*1000)}`;
 let myColor = 'black';
 let drawing = false;
 let lastX = 0,
@@ -74,6 +74,9 @@ socket.on('clear', () => {
 });
 socket.on('joined', (data) => {
   myColor = data.color;
+  if (data.username) {
+    username = data.username;
+  }
 });
 socket.on('usersUpdate', (users) => {
   updateUsers(users);
@@ -164,7 +167,7 @@ function updateUsers(users) {
   const myId = socket.id;
   users.forEach((u) => {
     const li = document.createElement('li');
-    li.textContent = u.username;
+    li.textContent = u.username + (u.id === myId ? ' (You)' : '');
     li.style.color = u.color;
     userList.appendChild(li);
 

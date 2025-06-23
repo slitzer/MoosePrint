@@ -22,8 +22,9 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('join', ({ username, width, height }) => {
     const color = randomColor();
-    users[socket.id] = { username, color, width, height };
-    socket.emit('joined', { color });
+    const name = username && username.trim() ? username : `User${Math.floor(Math.random() * 1000)}`;
+    users[socket.id] = { username: name, color, width, height };
+    socket.emit('joined', { color, username: name });
     io.emit('usersUpdate', getUsers());
   });
 
