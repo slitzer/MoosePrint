@@ -13,9 +13,9 @@ services:
     container_name: npm
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
+      - '3380:80'
+      - '3381:81'
+      - '3443:443'
     volumes:
       - ./npm/data:/data
       - ./npm/letsencrypt:/etc/letsencrypt
