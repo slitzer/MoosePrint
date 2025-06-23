@@ -6,6 +6,8 @@ const resetMenu = document.getElementById('contextResetZoom');
 const themeLight = document.getElementById('themeLight');
 const themeDark = document.getElementById('themeDark');
 const NS = 'http://www.w3.org/2000/svg';
+const BOARD_WIDTH = 1000;
+const BOARD_HEIGHT = 1000;
 let drawing = false;
 let lastX = 0,
   lastY = 0;
@@ -123,8 +125,8 @@ function clearBoard(emit) {
 function getPos(e) {
   const rect = svg.getBoundingClientRect();
   return [
-    (e.clientX - rect.left) / scale,
-    (e.clientY - rect.top) / scale,
+    ((e.clientX - rect.left) / rect.width) * BOARD_WIDTH,
+    ((e.clientY - rect.top) / rect.height) * BOARD_HEIGHT,
   ];
 }
 
