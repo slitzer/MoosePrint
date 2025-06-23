@@ -19,7 +19,7 @@ Think **[webwhiteboard.com](https://webwhiteboard.com)** but on your own server.
 ## 🛠️ Tech Stack
 
 - **Backend**: Node.js + WebSockets
-- **Frontend**: HTML5 Canvas + JavaScript
+ - **Frontend**: SVG + JavaScript
 - **Containerized**: Docker & Docker Compose
 - **Host OS**: Linux (Debian-based)
 
