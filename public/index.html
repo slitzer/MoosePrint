@@ -14,7 +14,7 @@
       align-items: center;
       justify-content: center;
     }
-    canvas {
+    svg#board {
       border: 1px solid #ccc;
       transform-origin: center center;
     }
@@ -23,7 +23,7 @@
 <body>
   <button id="clear">Clear Board</button>
   <button id="resetZoom">Reset Zoom</button>
-  <canvas id="board"></canvas>
+  <svg id="board" xmlns="http://www.w3.org/2000/svg"></svg>
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
