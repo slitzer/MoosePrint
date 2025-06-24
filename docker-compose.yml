@@ -3,20 +3,8 @@ services:
   whiteboard:
     build: .
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./public:/app/public
     restart: unless-stopped
- 
-  npm:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: npm
-    restart: unless-stopped
-    ports:
-      - '3380:80'
-      - '3381:81'
-      - '3443:443'
-    volumes:
-      - ./npm/data:/data
-      - ./npm/letsencrypt:/etc/letsencrypt
 
