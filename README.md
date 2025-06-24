@@ -37,6 +37,9 @@ Think **[webwhiteboard.com](https://webwhiteboard.com)** but on your own server.
    ```bash
    docker compose up --build -d
    ```
+   If you ever see errors about missing Node modules, rebuild the image with
+   `docker compose build --no-cache` to ensure dependencies are installed
+   correctly.
    The app listens on `127.0.0.1:3000` so it is only accessible from the
    host machine. Configure your own reverse proxy (e.g. Nginx) to expose it
    on your network if desired.
