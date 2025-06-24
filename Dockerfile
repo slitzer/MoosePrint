@@ -5,7 +5,10 @@ WORKDIR /app
 
 # Install backend dependencies first so Docker can cache the layer
 COPY server/package*.json ./server/
-RUN npm ci --omit=dev --prefix ./server
+
+WORKDIR /app/server
+RUN npm ci --omit=dev
+WORKDIR /app
 
 # Copy application source
 COPY server ./server
