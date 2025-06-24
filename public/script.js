@@ -11,35 +11,49 @@ const userRects = {};
 let username = `User${Math.floor(Math.random()*1000)}`;
 let myColor = 'black';
 let drawing = false;
+let panning = false;
+let panStartX = 0;
+let panStartY = 0;
 let lastX = 0,
   lastY = 0;
 let scale = 1;
+let fitScale = 1;
+let offsetX = 0,
+  offsetY = 0;
+
+const BOARD_WIDTH = 1920;
+const BOARD_HEIGHT = 1080;
+
+svg.setAttribute('width', BOARD_WIDTH);
+svg.setAttribute('height', BOARD_HEIGHT);
+svg.setAttribute('viewBox', `0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`);
 
 let currentTheme = 'light';
 setTheme("light");
 
 resizeBoard();
-svg.style.transform = `scale(${scale})`;
+updateTransform();
 window.addEventListener('resize', () => {
   resizeBoard();
-  svg.style.transform = `scale(${scale})`;
   socket.emit('updateResolution', {
-    width: parseInt(svg.getAttribute('width')),
-    height: parseInt(svg.getAttribute('height')),
+    width: BOARD_WIDTH / fitScale,
+    height: BOARD_HEIGHT / fitScale,
   });
 });
 
 socket.on('connect', () => {
   socket.emit('join', {
     username,
-    width: parseInt(svg.getAttribute('width')),
-    height: parseInt(svg.getAttribute('height')),
+    width: BOARD_WIDTH / fitScale,
+    height: BOARD_HEIGHT / fitScale,
   });
 });
 
 function resizeBoard() {
-  svg.setAttribute('width', window.innerWidth * 0.8);
-  svg.setAttribute('height', window.innerHeight * 0.8);
+  const sx = (window.innerWidth * 0.8) / BOARD_WIDTH;
+  const sy = (window.innerHeight * 0.8) / BOARD_HEIGHT;
+  fitScale = Math.min(sx, sy);
+  updateTransform();
 }
 
 svg.addEventListener('pointerdown', start);
@@ -50,7 +64,9 @@ svg.addEventListener('wheel', zoom, { passive: false });
 
 svg.addEventListener('contextmenu', (e) => {
   e.preventDefault();
-  showMenu(e.clientX, e.clientY);
+  if (!panning) {
+    showMenu(e.clientX, e.clientY);
+  }
 });
 
 document.addEventListener('click', hideMenu);
@@ -93,6 +109,13 @@ function hideMenu() {
 }
 
 function start(e) {
+  if (e.button === 1 || e.buttons === 3) {
+    panning = true;
+    svg.setPointerCapture(e.pointerId);
+    panStartX = e.clientX - offsetX;
+    panStartY = e.clientY - offsetY;
+    return;
+  }
   drawing = true;
   svg.setPointerCapture(e.pointerId);
   [lastX, lastY] = getPos(e);
@@ -100,12 +123,21 @@ function start(e) {
 
 function stop(e) {
   drawing = false;
+  if (panning) {
+    panning = false;
+  }
   if (e && svg.hasPointerCapture(e.pointerId)) {
     svg.releasePointerCapture(e.pointerId);
   }
 }
 
 function draw(e) {
+  if (panning) {
+    offsetX = e.clientX - panStartX;
+    offsetY = e.clientY - panStartY;
+    updateTransform();
+    return;
+  }
   if (!drawing) return;
   const [x, y] = getPos(e);
   drawLine(lastX, lastY, x, y, 'black', true);
@@ -115,13 +147,13 @@ function draw(e) {
 function zoom(e) {
   e.preventDefault();
   const delta = e.deltaY < 0 ? 1.1 : 0.9;
-  scale = Math.min(5, Math.max(1, scale * delta));
-  svg.style.transform = `scale(${scale})`;
+  scale = Math.min(5, Math.max(0.2, scale * delta));
+  updateTransform();
 }
 
 function resetZoom() {
   scale = 1;
-  svg.style.transform = 'scale(1)';
+  updateTransform();
 }
 
 function drawLine(x0, y0, x1, y1, color, emit) {
@@ -145,11 +177,15 @@ function clearBoard(emit) {
   if (emit) socket.emit('clear');
 }
 
+function updateTransform() {
+  svg.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale * fitScale})`;
+}
+
 function getPos(e) {
   const rect = svg.getBoundingClientRect();
   return [
-    (e.clientX - rect.left) / scale,
-    (e.clientY - rect.top) / scale,
+    (e.clientX - rect.left) / (scale * fitScale),
+    (e.clientY - rect.top) / (scale * fitScale),
   ];
 }
 
